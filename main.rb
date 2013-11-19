@@ -95,10 +95,10 @@ end
 post '/game/bet' do
 session[:userBet] = params[:userBet].to_i
 
-  if(session[:userBet] > session[:userMoney])
+  if(session[:userBet].to_i > session[:userMoney].to_i)
     @error = "Umm.. you don't have that much money!" 
     halt erb(:bet)
-  else (session[:userMoney]< 0)
+  else (session[:userMoney].to_i < 0)
     @error = "Sir, you ran out of money!"
     halt erb(:refill)
   end
