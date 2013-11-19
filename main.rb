@@ -89,6 +89,10 @@ post '/setname' do
 end
 
 get '/game/bet' do
+  if (session[:userMoney]).to_i <=0
+    @error = "Sir, you ran out of money"
+    halt erb(:refill)
+  end
   erb :bet
 end
 
@@ -98,9 +102,6 @@ session[:userBet] = params[:userBet].to_i
   if(session[:userBet].to_i > session[:userMoney].to_i)
     @error = "Umm.. you don't have that much money!" 
     halt erb(:bet)
-  else (session[:userMoney].to_i < 0)
-    @error = "Sir, you ran out of money!"
-    halt erb(:refill)
   end
   redirect '/game'
 end
@@ -111,8 +112,8 @@ end
 
 post '/game/refill' do
   if params[:userMoney].empty?
-    @error = "Please write in how much you want to borrow. Interest is at 5%!"
-    halt erb(:setname)
+    @error = "Please write in the monetary amt you want to borrow. Interest is at 5%!"
+    halt erb(:refill)
   end
    session[:userMoney] = params[:userMoney]
    redirect 'game/bet' 
@@ -120,23 +121,17 @@ end
 
 
 get '/game' do
-session[:userBet] = params[:userBet].to_i
 
-if(session[:userBet] > session[:userMoney])
+if(session[:userBet].to_i > session[:userMoney].to_i)
 
   @error = "Umm.. you don't have that much money!" 
   halt erb(:bet)
-else (session[:userMoney] < 0)
+elsif (session[:userMoney].to_i <= 0)
   @error = "Sir, you ran out of money!"
-  redirect '/game/refill'
+  halt erb(:refill)
 end
   #Noting whose turn it is
   session[:turn] = session[:userName]
-
-  if session[:userMoney] < 0
-    @error = "Sir, you have ran out of money"
-    halt erb(:refill)
-  end
 
   suits = ['H','C','D','S']
   values = ['2','3','4','5','6','7','8','9','10','A','J','Q','K']
@@ -193,7 +188,7 @@ get '/game/dealer' do
   player_score = calculate_total(session[:pcards])
 
   if dealer_score > BLACKJACK_VALUE
-    win!("Dealer score is #{dealer_score}. #{session[:userName]} has player_score.")
+    win!("Dealer score is #{dealer_score}. #{session[:userName]} has #{player_score}.")
   elsif dealer_score == BLACKJACK_VALUE
     lose!("Dealer hit BLACKJACK!")
   elsif dealer_score >= DEALER_MIN
@@ -212,6 +207,8 @@ end
 get '/game/dealer/compare' do
   player_score = calculate_total(session[:pcards])
   dealer_score = calculate_total(session[:dcards])
+
+  @player_hit_or_stay = false
 
   if player_score > dealer_score
     win!("Player score is #{player_score} & Dealer has #{dealer_score}.")
