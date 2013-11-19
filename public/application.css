@@ -1,0 +1,14 @@
+form#hit_player
+{
+	float : left;
+	margin-right: 10px;
+}
+form#stay_player
+{
+	float : left;
+}
+
+img.cards_cover
+{
+	margin : 0px 10px 10px 0px;
+}

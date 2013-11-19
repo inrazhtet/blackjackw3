@@ -1,0 +1,40 @@
+<h3> Welcome to Black Jack, <%= session[:userName] %> </h3>
+<br/>
+<div class ="well">
+<h4> Dealer Cards </h4>
+        <% session[:dcards].each_with_index do |cards, i| %>
+          <% if (session[:turn] != "dealer" && i == 0) %>
+            <img src = '/images/cards/cover.jpg'>
+          <% else %>
+             <%= card_swap(cards)%>   
+          <% end %>
+    <% end %>
+</div>
+
+<% if(@dealer_hit) %>
+  <form id = "hit_dealer" action="/game/dealer/hit" method="post">
+    <input class="btn btn-inverse" type="submit" value="Click to see Dealer Card">
+  </form>
+<% end %>
+
+
+<br/>
+<div class ="well">
+<h4> <%= session[:userName] %>'s Cards </h4>
+      <% session[:pcards].each do |cards| %>
+       <%= card_swap(cards) %>   
+  <% end %>
+</div>
+<br/>
+<p> <%= session[:userName] %> has the socre of <%=calculate_total(session[:pcards]) %> 
+</p> 
+
+<% if (@player_hit_or_stay) %>
+  <p> What would <%= session[:userName] %> like to do? </p>
+  <form id = "hit_player" action="/game/player/hit" method="post">
+    <input class="btn btn-success" type="submit" value="Hit">
+  </form>
+  <form id= "stay_player" action="/game/player/stay" method="post">
+    <input class="btn btn-warning" type ="submit" value="Stay">
+  </form>
+<%end%>

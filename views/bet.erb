@@ -1,0 +1,19 @@
+<h3> Put the amount you want to bet </h3>
+<form class="form-horizontal" action="/game/bet" method="post">
+  <div class="control-group">
+    <label class="control-label" for="userBet">Bet Amount</label>
+    <div class="controls">
+      <input type="number" name="userBet" placeholder="Bet">
+      <%if (@no_leftover)%>
+      	<p> out of <%=session[:userMoney]%> </p>
+      <%else%>
+      	<p> out of <%=session[:leftOver]%> </p>
+      <%end%>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <button type="submit" class="btn">Submit</button>
+    </div>
+  </div>
+</form>
