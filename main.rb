@@ -47,18 +47,18 @@ helpers do
 end
 
 def win!(msg)
-  session[:leftOver] = session[:userMoney].to_i + session[:userBet].to_i
-  @success = "#{session[:userName]} wins! #{msg} Current capital holding is #{session[:leftOver]}."
+  session[:userMoney] = session[:userMoney].to_i + session[:userBet].to_i
+  @success = "#{session[:userName]} wins! #{msg} Current capital holding is #{session[:userMoney]}."
 end
 
 def lose!(msg)
-  session[:leftOver] = session[:userMoney].to_i - session[:userBet].to_i
-  @error = "#{session[:userName]} loses! #{msg} Current capital holding is #{session[:leftOver]}."
+  session[:userMoney] = session[:userMoney].to_i - session[:userBet].to_i
+  @error = "#{session[:userName]} loses! #{msg} Current capital holding is #{session[:userMoney]}."
 end
 
 def tie!(msg)
-  session[:leftOver].to_i = session[:userMoney].to_i
-  @success = "#{session[:userName]} ties with Dealer! #{msg} Current capital holding is #{session[:leftOver]}."
+  session[:userMoney]
+  @success = "#{session[:userName]} ties with Dealer! #{msg} Current capital holding is #{session[:userMoney]}."
 end
 
 before do
@@ -84,37 +84,25 @@ post '/setname' do
   end
 
   session[:userName] = params[:userName] 
-  session[:userMoney] = params[:userMoney]
+  session[:userMoney] = params[:userMoney].to_i
   redirect '/game/bet'
 end
 
 get '/game/bet' do
-  if (session[:leftOver].empty?)
-      @no_leftover = true
-  else 
-      @no_leftover = false
-  end
   erb :bet
 end
 
 post '/game/bet' do
-  session[:userBet] = params[:userBet]
-if (session[:leftOver].empty?)
-  @no_leftover = true
-  if (session[:userBet] > session[:userMoney])
-    @error = "Umm.. you don't have that much money!"
+session[:userBet] = params[:userBet].to_i
+
+  if(session[:userBet] > session[:userMoney])
+    @error = "Umm.. you don't have that much money!" 
     halt erb(:bet)
+  else (session[:userMoney].to_i < 0)
+    binding.pry
+    @error = "Sir, you ran out of money!"
+    redirect '/game/refill'
   end
-elsif (session[:leftOver] > 0)
-  @no_leftover = false
-  if (session[:userBet] > session[:leftOver])
-    @error = "Umm.. you don't have that much money!"
-    halt erb(:bet)
-  end
-else (session[:leftOver] < 0)
-  @error = 'Sir, you ran out of money!'
-  halt erb(:refill)
-end
   redirect '/game'
 end
 
@@ -133,10 +121,20 @@ end
 
 
 get '/game' do
+session[:userBet] = params[:userBet].to_i
+
+if(session[:userBet] > session[:userMoney])
+
+  @error = "Umm.. you don't have that much money!" 
+  halt erb(:bet)
+else (session[:userMoney] < 0)
+  @error = "Sir, you ran out of money!"
+  redirect '/game/refill'
+end
   #Noting whose turn it is
   session[:turn] = session[:userName]
 
-  if session[:leftOver] < 0
+  if session[:userMoney] < 0
     @error = "Sir, you have ran out of money"
     halt erb(:refill)
   end

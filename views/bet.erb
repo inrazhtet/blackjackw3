@@ -4,11 +4,7 @@
     <label class="control-label" for="userBet">Bet Amount</label>
     <div class="controls">
       <input type="number" name="userBet" placeholder="Bet">
-      <%if (@no_leftover)%>
       	<p> out of <%=session[:userMoney]%> </p>
-      <%else%>
-      	<p> out of <%=session[:leftOver]%> </p>
-      <%end%>
     </div>
   </div>
   <div class="control-group">
@@ -17,3 +13,6 @@
     </div>
   </div>
 </form>
+
+
+
