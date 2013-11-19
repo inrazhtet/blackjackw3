@@ -98,10 +98,9 @@ session[:userBet] = params[:userBet].to_i
   if(session[:userBet] > session[:userMoney])
     @error = "Umm.. you don't have that much money!" 
     halt erb(:bet)
-  else (session[:userMoney].to_i < 0)
-    binding.pry
+  else (session[:userMoney]< 0)
     @error = "Sir, you ran out of money!"
-    redirect '/game/refill'
+    halt erb(:refill)
   end
   redirect '/game'
 end
@@ -114,7 +113,7 @@ post '/game/refill' do
   if params[:userMoney].empty?
     @error = "Please write in how much you want to borrow. Interest is at 5%!"
     halt erb(:setname)
-   end
+  end
    session[:userMoney] = params[:userMoney]
    redirect 'game/bet' 
 end
