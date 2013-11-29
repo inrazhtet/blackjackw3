@@ -48,17 +48,17 @@ end
 
 def win!(msg)
   session[:userMoney] = session[:userMoney].to_i + session[:userBet].to_i
-  @success = "#{session[:userName]} wins! #{msg} Current capital holding is #{session[:userMoney]}."
+  @winner = "#{session[:userName]} wins! #{msg} Current capital holding is #{session[:userMoney]}."
 end
 
 def lose!(msg)
   session[:userMoney] = session[:userMoney].to_i - session[:userBet].to_i
-  @error = "#{session[:userName]} loses! #{msg} Current capital holding is #{session[:userMoney]}."
+  @loser = "#{session[:userName]} loses! #{msg} Current capital holding is #{session[:userMoney]}."
 end
 
 def tie!(msg)
   session[:userMoney]
-  @success = "#{session[:userName]} ties with Dealer! #{msg} Current capital holding is #{session[:userMoney]}."
+  @winner = "#{session[:userName]} ties with Dealer! #{msg} Current capital holding is #{session[:userMoney]}."
 end
 
 before do
@@ -71,7 +71,6 @@ end
 
 get '/setname' do
   erb :setname
-
 end
 
 post '/setname' do
@@ -173,7 +172,7 @@ post '/game/player/hit' do
   else
     @player_hit_or_stay = true
   end
-  erb :game
+  erb :game, layout: false
 end
 
 post '/game/player/stay' do
@@ -196,7 +195,7 @@ get '/game/dealer' do
   else dealer_score < DEALER_MIN
       @dealer_hit = true
   end
-  erb :game
+  erb :game, layout: false
 end
 
 post '/game/dealer/hit' do
@@ -217,7 +216,7 @@ get '/game/dealer/compare' do
   else 
     tie!("#{session[:userName]} score is #{player_score} & Dealer has #{dealer_score}.")
   end
-  erb :game
+  erb :game, layout: false
 end
 
 get '/game/over' do
